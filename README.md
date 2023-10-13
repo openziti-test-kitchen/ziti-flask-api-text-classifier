@@ -15,7 +15,7 @@ python ./ziti-classifier-api.py /opt/openziti/etc/identities/classifier-server.j
 
 ```bash
 curl \
-  classifier.private:5000/api/v1/classify \
+  http://classifier.private:80/api/v1/classify \
   --request POST \
   --header 'content-type: application/json' \
   --data '{"text": "I am a little teapot."}';

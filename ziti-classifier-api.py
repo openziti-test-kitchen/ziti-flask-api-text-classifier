@@ -12,12 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-from logging.config import dictConfig
-
-import openziti
 from flask import Flask, request
+import openziti
+import sys
 from transformers import pipeline
+from logging.config import dictConfig
 
 classifier = pipeline(
     # device=0,
@@ -44,14 +43,13 @@ dictConfig({
 app = Flask(__name__)
 bind_opts = {}  # populated in main
 
-
+# the port number must match the waitress serve() port
 @openziti.zitify(bindings={
     ':8000': bind_opts,
 })
 def runApp():
     from waitress import serve
     serve(app,port=8000)
-
 
 @app.route('/')
 def greet():  # put application's code here
@@ -61,8 +59,8 @@ def greet():  # put application's code here
 @app.route('/api/v1/classify', methods=['POST'])
 def classify():
     input = request.json['text']
-    result = classifier(input)
-    app.logger.info('request: %s, input: %s, result: %s', request, input, result)
+    result = classifier(input)[0]
+    app.logger.info('input: "%s", label: %s, score: %s', input, result['label'], result['score'])
     return result
 
 
