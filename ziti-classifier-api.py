@@ -60,7 +60,7 @@ def greet():  # put application's code here
 def classify():
     input = request.json['text']
     result = classifier(input)[0]
-    app.logger.info('input: "%s", label: %s, score: %s', input, result['label'], result['score'])
+    app.logger.info('input: "%s", label: %s, score: %s', repr(input), result['label'], result['score'])
     return result
 
 
