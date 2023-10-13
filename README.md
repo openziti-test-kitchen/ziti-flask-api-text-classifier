@@ -13,6 +13,9 @@ python ./ziti-classifier-api.py /opt/openziti/etc/identities/classifier-server.j
 
 ## Send an HTTP Request
 
+This example assumes an authorized Ziti Identity is loaded in a tunneller running on the same device. The tunneller
+provides a nameserver to resolve the Ziti Service address `classifier.private`.
+
 ```bash
 curl \
   http://classifier.private:80/api/v1/classify \
@@ -25,9 +28,22 @@ curl \
 [{"label":"Non-Offensive","score":0.8720483183860779}]
 ```
 
+This example employs the `zitify` shell script for Linux to run cURL in a Ziti-enabled environment, avoiding the need
+for a tunneller running in parallel on the same device. The `zitify` script is available
+[from GitHub](https://github.com/openziti/zitify/#readme).
+
+```bash
+zitify --identity ./classifier-client.json \
+curl \
+  http://classifier.private:80/api/v1/classify \
+  --request POST \
+  --header 'content-type: application/json' \
+  --data '{"text": "I am a little teapot."}';
+```
+
 ## Text Classification Model
 
-Make sure you have the git-lfs executable on your path (https://git-lfs.com) before running the following command.
+Ensure the git-lfs executable is in the search path (https://git-lfs.com) before running the following command.
 
 ```bash
 git lfs install
@@ -46,13 +62,10 @@ git clone https://huggingface.co/elozano/tweet_offensive_eval ./models/elozano_t
 pip install -r ./requirements.txt
 ```
 
-## GPU Acceleration
-
-A GPU is not required to use this example. To enabled GPU acceleration, uncomment `device: 0` to elect the first GPU.  
-
 ## OpenZiti Resources
 
-You need a Ziti Identity and Ziti Service for the Flask server to use. Here's an example that creates an Identity for the client and server. With this config your HTTP client should send POST requests to `http://classifier.private:80/api/v1/classify` with a JSON body containing a `text` attribute.
+The Flask server uses a Ziti Identity and Ziti Service to provide the API to overlay clients. Here's an example that
+creates an Identity for the client and server.
 
 ```bash
 ziti edge create config "classifier-intercept-config" intercept.v1 \
@@ -71,3 +84,7 @@ ziti edge create identity classifier-client --role-attributes classifier-clients
 
 ziti edge create identity classifier-server --role-attributes classifier-hosts
 ```
+
+## GPU Acceleration
+
+A GPU is not required to use this example. To enabled GPU acceleration, uncomment `device: 0` to elect the first GPU.  
