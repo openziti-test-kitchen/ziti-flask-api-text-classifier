@@ -7,8 +7,8 @@ an offensive text classifier model.
 ## Run the Flask API Server
 
 ```bash
-#                               <path to Ziti Identity>                             <Ziti Service name>
-python ./ziti-classifier-api.py /opt/openziti/etc/identities/classifier-server.json classifier-service
+#                               <path to Ziti Identity>  <Ziti Service name>
+python ./ziti-classifier-api.py ./classifier-server.json classifier-service
 ```
 
 ## Send an HTTP Request
