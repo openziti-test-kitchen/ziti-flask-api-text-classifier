@@ -15,7 +15,7 @@ python ./ziti-classifier-api.py /opt/openziti/etc/identities/classifier-server.j
 
 ```bash
 curl \
-  oobabooga.private:5000/api/v1/classify \
+  classifier.private:5000/api/v1/classify \
   --request POST \
   --header 'content-type: application/json' \
   --data '{"text": "I am a little teapot."}';
@@ -48,8 +48,7 @@ pip install -r ./requirements.txt
 
 ## GPU Acceleration
 
-The Python program does not specify a GPU for acceleration. Uncomment `device: 0` to elect the first GPU is used for
-acceleration. If you don't intend to use exactly one GPU you need to adjust this parameter.
+A GPU is not required to use this example. To enabled GPU acceleration, uncomment `device: 0` to elect the first GPU.  
 
 ## OpenZiti Resources
 
