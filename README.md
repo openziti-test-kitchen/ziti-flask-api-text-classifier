@@ -80,9 +80,19 @@ ziti edge create service-policy "classifier-bind-policy" Bind \
 ziti edge create service-policy "classifier-dial-policy" Dial \
     --service-roles '@classifier-service' --identity-roles '#classifier-clients'
 
-ziti edge create identity classifier-client --role-attributes classifier-clients
+ziti edge create identity classifier-client \
+    --role-attributes classifier-clients \
+    --jwt-output-file ./classifier-client.jwt
 
-ziti edge create identity classifier-server --role-attributes classifier-hosts
+ziti edge create identity classifier-server \
+    --role-attributes classifier-hosts \
+    --jwt-output-file ./classifier-server.jwt
+
+# produces ./classifier-client.json
+ziti edge enroll ./classifier-client.jwt
+
+# produces ./classifier-server.json
+ziti edge enroll ./classifier-server.jwt
 ```
 
 ## GPU Acceleration
