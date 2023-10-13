@@ -41,21 +41,6 @@ curl \
   --data '{"text": "I am a little teapot."}';
 ```
 
-## Text Classification Model
-
-Ensure the git-lfs executable is in the search path (https://git-lfs.com) before running the following command.
-
-```bash
-git lfs install
-```
-
-Download the model from HuggingFace and place it in the `./models` sub-directory in a path that matches the
-Python program's loader statement.
-
-```bash
-git clone https://huggingface.co/elozano/tweet_offensive_eval ./models/elozano_tweet_offensive_eval
-```
-
 ## Install Python Dependencies
 
 ```bash

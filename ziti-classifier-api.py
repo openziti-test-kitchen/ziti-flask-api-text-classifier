@@ -21,7 +21,7 @@ from logging.config import dictConfig
 classifier = pipeline(
     # device=0,
     task="sentiment-analysis",
-    model="models/elozano_tweet_offensive_eval"
+    model="elozano/tweet_offensive_eval"
 )
 
 dictConfig({
