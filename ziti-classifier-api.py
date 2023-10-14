@@ -24,11 +24,15 @@ SENTIMENTS = {
     'negative': "Offensive",
 }
 LABELS = {
+    'positive': SENTIMENTS['positive'],
+    'neutral': SENTIMENTS['neutral'],
+    'negative': SENTIMENTS['negative'],
     'LABEL_0': SENTIMENTS['positive'],
     'LABEL_1': SENTIMENTS['negative'],
+    'non-toxic': SENTIMENTS['positive'],
     'toxic': SENTIMENTS['negative'],
-    'neutral': SENTIMENTS['neutral'],
-    'positive': SENTIMENTS['positive'],
+    'SFW': SENTIMENTS['positive'],
+    'NSFW': SENTIMENTS['negative'],
 }
 
 classifier = pipeline(
