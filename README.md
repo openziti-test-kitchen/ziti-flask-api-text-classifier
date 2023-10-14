@@ -82,4 +82,5 @@ ziti edge enroll ./classifier-server.jwt
 
 ## GPU Acceleration
 
-A GPU is not required to use this example. To enabled GPU acceleration, uncomment `device: 0` to elect the first GPU.  
+A GPU is not required to use this example. To disable GPU acceleration, comment `device: 0` to stop electing the first
+GPU.
