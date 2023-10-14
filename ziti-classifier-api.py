@@ -33,12 +33,16 @@ LABELS = {
     'toxic': SENTIMENTS['negative'],
     'SFW': SENTIMENTS['positive'],
     'NSFW': SENTIMENTS['negative'],
+    "nothate": SENTIMENTS['positive'],
+    "hate": SENTIMENTS['negative'],
 }
 
 classifier = pipeline(
-    # device=0,
+    device=0,
     task="text-classification",
-    model="s-nlp/roberta_toxicity_classifier",
+    # model="michellejieli/NSFW_text_classifier",   # most sensitive
+    model="facebook/roberta-hate-speech-dynabench-r4-target",
+    # model="s-nlp/roberta_toxicity_classifier",  # least sensitive
     return_all_scores=False,  # return the predicted sentiment only so we don't need to sort by score
 )
 
