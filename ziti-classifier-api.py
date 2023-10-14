@@ -18,6 +18,19 @@ import sys
 from transformers import pipeline
 from logging.config import dictConfig
 
+SENTIMENTS = {
+    'positive': "Not Offensive",
+    'neutral': "Not Offensive",
+    'negative': "Offensive",
+}
+LABELS = {
+    'LABEL_0': SENTIMENTS['positive'],
+    'LABEL_1': SENTIMENTS['negative'],
+    'toxic': SENTIMENTS['negative'],
+    'neutral': SENTIMENTS['neutral'],
+    'positive': SENTIMENTS['positive'],
+}
+
 classifier = pipeline(
     # device=0,
     task="text-classification",
@@ -64,26 +77,13 @@ def greet():  # put application's code here
 @app.route('/api/v1/classify', methods=['POST'])
 def classify():
     input = request.json['text']
-    result = classifier(input)[0]
-    sentiment = result['label']
-    logit = result['score']
-    sentiments = {
-        'positive': "Not Offensive",
-        'neutral': "Not Offensive",
-        'negative': "Offensive",
-    }
-    labels = {
-        'LABEL_0': sentiments['positive'],
-        'LABEL_1': sentiments['negative'],
-        'toxic': sentiments['negative'],
-        'neutral': sentiments['neutral'],
-        'positive': sentiments['positive'],
-    }
-    response = {
-        'label': labels[sentiment],
-        'score': logit,
-    }
-    app.logger.info('input: %s, label: %s, score: %s', repr(input), response['label'], response['score'])
+    prediction = classifier(input)[0]
+    sentiment = LABELS[prediction['label']]
+    response = [{
+        'label': sentiment,
+        'score': prediction['score'],
+    }]
+    app.logger.info('input: %s, label: %s, score: %s', repr(input), sentiment, prediction['score'])
     return response
 
 
