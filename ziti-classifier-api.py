@@ -40,10 +40,10 @@ LABELS = {
 classifier = pipeline(
     device=0,
     task="text-classification",
-    # model="michellejieli/NSFW_text_classifier",   # most sensitive
-    model="facebook/roberta-hate-speech-dynabench-r4-target",
+    model="michellejieli/NSFW_text_classifier",   # most sensitive
+    # model="facebook/roberta-hate-speech-dynabench-r4-target",
     # model="s-nlp/roberta_toxicity_classifier",  # least sensitive
-    return_all_scores=False,  # return the predicted sentiment only so we don't need to sort by score
+    top_k=1,  # return the predicted sentiment only so we don't need to sort by score
 )
 
 dictConfig({
@@ -85,7 +85,7 @@ def greet():  # put application's code here
 @app.route('/api/v1/classify', methods=['POST'])
 def classify():
     input = request.json['text']
-    prediction = classifier(input)[0]
+    prediction = classifier(input)[0][0]
     sentiment = LABELS[prediction['label']]
     response = [{
         'label': sentiment,
