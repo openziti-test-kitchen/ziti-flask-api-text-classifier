@@ -20,8 +20,9 @@ from logging.config import dictConfig
 
 classifier = pipeline(
     # device=0,
-    task="sentiment-analysis",
-    model="elozano/tweet_offensive_eval"
+    task="text-classification",
+    model="s-nlp/roberta_toxicity_classifier",
+    return_all_scores=False,  # return the predicted sentiment only so we don't need to sort by score
 )
 
 dictConfig({
@@ -45,11 +46,15 @@ bind_opts = {}  # populated in main
 
 # the port number must match the waitress serve() port
 @openziti.zitify(bindings={
-    ':8000': bind_opts,
+    ':5000': bind_opts,
 })
 def runApp():
     from waitress import serve
-    serve(app,port=8000)
+    serve(app,port=5000)
+
+def runAppNoZiti():
+    from waitress import serve
+    serve(app,port=5000)
 
 @app.route('/')
 def greet():  # put application's code here
@@ -60,11 +65,32 @@ def greet():  # put application's code here
 def classify():
     input = request.json['text']
     result = classifier(input)[0]
-    app.logger.info('input: %s, label: %s, score: %s', repr(input), result['label'], result['score'])
-    return result
+    sentiment = result['label']
+    logit = result['score']
+    sentiments = {
+        'positive': "Not Offensive",
+        'neutral': "Not Offensive",
+        'negative': "Offensive",
+    }
+    labels = {
+        'LABEL_0': sentiments['positive'],
+        'LABEL_1': sentiments['negative'],
+        'toxic': sentiments['negative'],
+        'neutral': sentiments['neutral'],
+        'positive': sentiments['positive'],
+    }
+    response = {
+        'label': labels[sentiment],
+        'score': logit,
+    }
+    app.logger.info('input: %s, label: %s, score: %s', repr(input), response['label'], response['score'])
+    return response
 
 
 if __name__ == '__main__':
-    bind_opts['ztx'] = sys.argv[1]
-    bind_opts['service'] = sys.argv[2]
-    runApp()
+    if sys.argv[1] == 'noziti':
+        runAppNoZiti()
+    else:
+        bind_opts['ztx'] = sys.argv[1]
+        bind_opts['service'] = sys.argv[2]
+        runApp()
