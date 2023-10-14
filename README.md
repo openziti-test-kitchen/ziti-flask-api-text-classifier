@@ -1,5 +1,5 @@
 
-# Zitified Flask API for Detecting Offensive Language
+# Zitified Flask API for Detecting Potentially-Offensive Language
 
 This is a simple Python program the leverages OpenZiti to privately share a Flask API and Transformers library to load
 an offensive text classifier model.
