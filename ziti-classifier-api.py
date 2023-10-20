@@ -40,8 +40,8 @@ LABELS = {
 classifier = pipeline(
     device=0,
     task="text-classification",
-    model="michellejieli/NSFW_text_classifier",   # most sensitive
-    # model="facebook/roberta-hate-speech-dynabench-r4-target",
+    # model="michellejieli/NSFW_text_classifier",   # most sensitive
+    model="facebook/roberta-hate-speech-dynabench-r4-target",
     # model="s-nlp/roberta_toxicity_classifier",  # least sensitive
     top_k=1,  # return the predicted sentiment only so we don't need to sort by score
 )

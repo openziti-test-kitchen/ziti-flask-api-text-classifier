@@ -2,7 +2,6 @@ set -euo pipefail
 declare -i OFFENSIVE=0 NOTOFFENSIVE=0
 for i in {0..99}
 do
-  # TEXT="$(fortune -a /usr/share/games/fortunes/off | tr '\n\r\v\f' ' ')"
   TEXT="$(fortune -o | tr '\n\r\v\f' ' ')"
   REQUEST="$(
     jq  --null-input \
