@@ -38,7 +38,7 @@ LABELS = {
 }
 
 classifier = pipeline(
-    device=0,
+    # device=0,
     task="text-classification",
     # model="michellejieli/NSFW_text_classifier",   # most sensitive
     model="facebook/roberta-hate-speech-dynabench-r4-target",
