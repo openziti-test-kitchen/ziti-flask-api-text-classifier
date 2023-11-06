@@ -84,3 +84,43 @@ ziti edge enroll ./classifier-server.jwt
 
 A GPU is not required to use this example. To disable GPU acceleration, comment `device: 0` to stop electing the first
 GPU.
+
+## Docker
+
+Publishing a GitHub release in this repo updates the container image in Docker Hub automatically.
+
+The image is huge.
+
+```bash
+$ docker inspect -f "{{ .Size }}" docker.io/openziti/ziti-flask-api-text-classifier:v1 | numfmt --to=si       
+4.5G
+```
+
+The app runs as `nobody` (uid:gid, 65534:65534), and startup can be accelerated by mounting persistent storage on `/app/models`. That's a writeable cache dir where the large model files are downloaded each time the container starts if not persisted.
+
+```bash
+docker run \
+  --restart unless-stopped \
+  --name classifier-service \
+  --volume ./text-classifier-server.json:/app/ziti.json \
+  --volume models:/app/models \
+  docker.io/openziti/ziti-flask-api-text-classifier:v1 \
+    /app/ziti.json \
+    classifier-service
+```
+
+The last two args are used by the Python program to 1) load Ziti context 2) bind a service by name.
+
+The mounted Ziti identity file needs to be readable by uid 65534.
+
+The optional named volume needs to be writeable by uid 65534. Here's how I prepped the volume before mounting.
+
+```bash
+❯ docker volume create models
+models
+
+❯ docker run --rm --user root --volume models:/mnt alpine chown -Rc 65534:65534 /mnt
+changed ownership of '/mnt' to 65534:65534
+```
+
+Now the named volume is ready to mount on the app container.
