@@ -11,6 +11,9 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
+            "env": {
+                "TRANSFORMERS_CACHE": "${workspaceFolder}/models"
+            },
             "args": ["noziti"]
         }
     ]
