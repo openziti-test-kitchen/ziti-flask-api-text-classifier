@@ -12,12 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from flask import Flask, request
-import openziti
 import sys
-from transformers import pipeline
 from logging.config import dictConfig
+
+import openziti
+from flask import Flask, request
 from torch import cuda
+from transformers import pipeline
 
 SENTIMENTS = {
     'positive': "Not Offensive",
