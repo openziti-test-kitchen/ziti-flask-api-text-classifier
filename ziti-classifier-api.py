@@ -17,6 +17,7 @@ import openziti
 import sys
 from transformers import pipeline
 from logging.config import dictConfig
+from torch import cuda
 
 SENTIMENTS = {
     'positive': "Not Offensive",
@@ -37,15 +38,6 @@ LABELS = {
     "hate": SENTIMENTS['negative'],
 }
 
-classifier = pipeline(
-    # device=0,
-    task="text-classification",
-    # model="michellejieli/NSFW_text_classifier",   # most sensitive
-    model="facebook/roberta-hate-speech-dynabench-r4-target",
-    # model="s-nlp/roberta_toxicity_classifier",  # least sensitive
-    top_k=1,  # return the predicted sentiment only so we don't need to sort by score
-)
-
 dictConfig({
     'version': 1,
     'formatters': {'default': {
@@ -62,8 +54,19 @@ dictConfig({
     }
 })
 
+classifier = pipeline(
+    device=0 if cuda.is_available() else "cpu",
+    task="text-classification",
+    # model="michellejieli/NSFW_text_classifier",   # most sensitive
+    model="facebook/roberta-hate-speech-dynabench-r4-target",
+    # model="s-nlp/roberta_toxicity_classifier",  # least sensitive
+    top_k=1,  # return the predicted sentiment only so we don't need to sort by score
+)
+
 app = Flask(__name__)
 bind_opts = {}  # populated in main
+
+app.logger.debug('cuda available: %s', cuda.is_available())
 
 # the port number must match the waitress serve() port
 @openziti.zitify(bindings={
