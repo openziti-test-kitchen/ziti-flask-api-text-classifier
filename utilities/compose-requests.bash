@@ -13,7 +13,7 @@ do
     --request POST \
     --header 'content-type: application/json' \
     --data "$REQUEST" \
-    127.0.0.1:5000/api/v1/classify \
+    ${CLASSIFIER_URL:-127.0.0.1:5000}/api/v1/classify \
     | jq --raw-output '.[0].label'
   )
   if [[ -z "$PREDICTION" ]]; then

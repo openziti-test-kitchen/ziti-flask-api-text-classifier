@@ -12,7 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import sys
+import tempfile
 from logging.config import dictConfig
 
 import openziti
@@ -69,22 +71,26 @@ bind_opts = {}  # populated in main
 
 app.logger.debug('cuda available: %s', cuda.is_available())
 
+
 # the port number must match the waitress serve() port
 @openziti.zitify(bindings={
     ':5000': bind_opts,
 })
 def runApp():
     from waitress import serve
-    serve(app,port=5000)
+    serve(app, port=5000)
+
 
 def runAppNoZiti():
     from waitress import serve
-    serve(app,port=5000)
+    serve(app, port=5000)
+
 
 @app.route('/')
 def greet():  # put application's code here
     app.logger.info('sending greeting response to GET /')
     return 'Post {"text": "input to classify"} to /api/v1/classify'
+
 
 @app.route('/api/v1/classify', methods=['POST'])
 def classify():
@@ -102,6 +108,13 @@ def classify():
 if __name__ == '__main__':
     if sys.argv[1] == 'noziti':
         runAppNoZiti()
+    elif os.environ.get(sys.argv[1]):
+        with tempfile.NamedTemporaryFile(delete=False) as ztx:
+            ztx.write(os.environ.get(sys.argv[1]).encode())
+            app.logger.info(f"loaded Ziti identity from env var '{sys.argv[1]}' in tmp file '{ztx.name}'")
+            bind_opts['ztx'] = ztx.name
+            bind_opts['service'] = sys.argv[2]
+            runApp()
     else:
         bind_opts['ztx'] = sys.argv[1]
         bind_opts['service'] = sys.argv[2]
